@@ -1,7 +1,6 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import { connectDatabase } from './config/mongoose.config';
-import productRoutes from './interfaces/http/routes/product.routes';
 import routes from './interfaces/http/routes';
 
 dotenv.config();
@@ -23,5 +22,9 @@ const start = async () => {
 };
 
 start();
+
+app.use((req, res) => {
+  res.status(404).json({ error: 'Ruta no encontrada' });
+});
 
 export default app;
