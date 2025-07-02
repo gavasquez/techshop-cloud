@@ -1,7 +1,6 @@
 import { Product } from "../../domain/product/Product";
 import { ProductRepository } from "../../domain/product/ProductRepository";
 
-
 export class CreateProductUseCase {
     constructor(private productRepository: ProductRepository) {}
 
