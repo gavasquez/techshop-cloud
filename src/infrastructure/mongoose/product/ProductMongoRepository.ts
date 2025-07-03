@@ -6,12 +6,12 @@ import { ProductFilterDTO } from '../../../interfaces/http/dtos/ProductFilterDTO
 export class ProductMongoRepository implements ProductRepository {
   async save(product: Product): Promise<Product> {
     const doc = await ProductModel.create(product);
-    return new Product(doc.name, doc.description, doc.price, doc.category, doc.stockQuantity);
+    return new Product(doc.name, doc.description, doc.price, doc.category, doc.stockQuantity, doc.id.toString());
   }
 
   async findAll(): Promise<Product[]> {
     const docs = await ProductModel.find();
-    return docs.map(doc => new Product(doc.name, doc.description, doc.price, doc.category, doc.stockQuantity));
+    return docs.map(doc => new Product(doc.name, doc.description, doc.price, doc.category, doc.stockQuantity, doc.id.toString()));
   }
 
   async findByFilters(filters: ProductFilterDTO): Promise<Product[]> {
@@ -39,7 +39,8 @@ export class ProductMongoRepository implements ProductRepository {
           doc.description,
           doc.price,
           doc.category,
-          doc.stockQuantity
+          doc.stockQuantity,
+          doc.id.toString(),
         )
     );
   }

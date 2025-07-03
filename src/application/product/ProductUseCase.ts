@@ -1,10 +1,13 @@
 import { Product } from "../../domain/product/Product";
 import { ProductRepository } from "../../domain/product/ProductRepository";
 
-export class CreateProductUseCase {
-    constructor(private productRepository: ProductRepository) {}
+export class ProductUseCase {
 
-    async execute( data: {
+    constructor(
+        private readonly productRepository: ProductRepository
+    ) { }
+
+    async createProduct(data: {
         name: string;
         description: string;
         price: number;
@@ -18,7 +21,14 @@ export class CreateProductUseCase {
             data.category,
             data.stockQuantity
         );
+        return await this.productRepository.save(product);
+    }
 
-       return await this.productRepository.save(product);
+    async getAllProducts(): Promise<Product[]> {
+        return await this.productRepository.findAll();
+    }
+
+    async findProducts(filters: any): Promise<Product[]> {
+        return await this.productRepository.findByFilters(filters);
     }
 }

@@ -1,13 +1,16 @@
 import { Router } from 'express';
-import { getProductsController } from '../controllers/product/GetProductsController';
-import { findProductsController } from '../controllers/product/FindProductsController';
-import { createProductController } from '../controllers/product/CreateProductController';
-import { CreateProductSchema } from '../dtos/CreateProductDTO';
+import { ProductMongoRepository } from '../../../infrastructure/mongoose/product/ProductMongoRepository';
+import { ProductUseCase } from '../../../application/product/ProductUseCase';
+import { ProductController } from '../controllers/product/ProductController';
 
 const productRoutes = Router();
 
-productRoutes.post('/', createProductController);
-productRoutes.get('/', getProductsController);
-productRoutes.get('/search', findProductsController);
+const repository = new ProductMongoRepository();
+const productUseCase = new ProductUseCase(repository);
+const productController = new ProductController(productUseCase);
+
+productRoutes.post('/', productController.createProductController);
+productRoutes.get('/', productController.getProductsController);
+productRoutes.get('/search', productController.findProductsController);
 
 export default productRoutes;
