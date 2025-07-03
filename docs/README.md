@@ -6,22 +6,31 @@ Este repositorio contiene la estructura base del backend de **TechShop Cloud**, 
 ##  Estructura de Carpetas
 
 techshop-cloud/
-├── src/                       # Código fuente principal
-│   ├── domain/               # Entidades, value objects y lógica de dominio
-│   ├── application/          # Casos de uso y coordinación del dominio
-│   ├── infrastructure/       # Adaptadores externos como la base de datos
-│   ├── interfaces/           # Interfaces de entrada (HTTP, CLI, etc.)
-│   ├── config/               # Configuraciones de entorno y conexiones
-│   └── index.ts              # Punto de entrada principal de la aplicación
-│
-├── tests/                    # Pruebas unitarias y de integración (TDD)
-│
-├── .env                      # Variables de entorno (no versionadas)
-├── tsconfig.json             # Configuración de TypeScript
-├── jest.config.js            # Configuración de Jest para pruebas
-├── Dockerfile                # Archivo Docker para empaquetar la app
-├── docker-compose.yml        # Orquestación de servicios (ej. MongoDB)
-└── README.md                 # Documentación general del proyecto
+├── .env.example             # Archivo de ejemplo para variables de entorno
+├── .gitignore               # Ignora archivos/carpetas para git
+├── Dockerfile               # Configuración para contenedor Docker
+├── docker-compose.yml       # Orquestación de servicios Docker
+├── jest.config.js           # Configuración para pruebas con Jest
+├── nodemon.json             # Configuración para reinicio automático en desarrollo
+├── package-lock.json        # Control de versiones de dependencias
+├── package.json             # Dependencias y scripts del proyecto
+├── test.js                  # Script o archivo de pruebas
+├── tsconfig.json            # Configuración de TypeScript
+├── __tests__/               # Pruebas unitarias o de integración
+├── docs/                    # Documentación del proyecto
+│   ├── README.md
+│   ├── project-status.md
+│   ├── architecture~/       # (Ejemplo) Documentos de arquitectura
+│   ├── deployment~/         # (Ejemplo) Documentos de despliegue
+│   └── development~/        # (Ejemplo) Guías de desarrollo
+├── src/                     # Código fuente principal
+│   ├── app.ts               # Configuración principal de la app (Express, middlewares)
+│   ├── index.ts             # Punto de entrada principal
+│   ├── application/         # Lógica de aplicación (casos de uso, servicios)
+│   ├── config/              # Configuración (env, conexiones)
+│   ├── domain/              # Lógica de dominio, entidades, value objects
+│   ├── infrastructure/      # Adaptadores a servicios externos, persistencia
+│   └── interfaces/          # Interfaces de entrada (API, CLI, etc.)
 
 ## Descripción del Proyecto
 
