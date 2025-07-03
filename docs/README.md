@@ -5,6 +5,9 @@ Este repositorio contiene la estructura base del backend de **TechShop Cloud**, 
 
 ##  Estructura de Carpetas
 
+## Estructura del Proyecto
+
+```markdown
 techshop-cloud/
 ├── .env.example             # Archivo de ejemplo para variables de entorno
 ├── .gitignore               # Ignora archivos/carpetas para git
@@ -20,18 +23,17 @@ techshop-cloud/
 ├── docs/                    # Documentación del proyecto
 │   ├── README.md
 │   ├── project-status.md
-│   ├── architecture~/       # (Ejemplo) Documentos de arquitectura
-│   ├── deployment~/         # (Ejemplo) Documentos de despliegue
-│   └── development~/        # (Ejemplo) Guías de desarrollo
+│   ├── architecture~/
+│   ├── deployment~/
+│   └── development~/
 ├── src/                     # Código fuente principal
-│   ├── app.ts               # Configuración principal de la app (Express, middlewares)
-│   ├── index.ts             # Punto de entrada principal
-│   ├── application/         # Lógica de aplicación (casos de uso, servicios)
-│   ├── config/              # Configuración (env, conexiones)
-│   ├── domain/              # Lógica de dominio, entidades, value objects
-│   ├── infrastructure/      # Adaptadores a servicios externos, persistencia
-│   └── interfaces/          # Interfaces de entrada (API, CLI, etc.)
-
+│   ├── app.ts
+│   ├── index.ts
+│   ├── application/
+│   ├── config/
+│   ├── domain/
+│   ├── infrastructure/
+│   └── interfaces/
 ## Descripción del Proyecto
 
 TechShop Cloud es una plataforma de comercio electrónico escalable diseñada para la venta de productos tecnológicos. El proyecto implementa una arquitectura robusta basada en Domain-Driven Design (DDD) y arquitectura hexagonal, proporcionando escalabilidad, seguridad y tolerancia a fallos.
