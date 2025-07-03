@@ -26,14 +26,16 @@ techshop-cloud/
 │   ├── architecture~/
 │   ├── deployment~/
 │   └── development~/
-├── src/                     # Código fuente principal
-│   ├── app.ts
-│   ├── index.ts
-│   ├── application/
-│   ├── config/
-│   ├── domain/
-│   ├── infrastructure/
-│   └── interfaces/
+├── src/                   # Código fuente principal
+│   ├── app.ts             # Configuración principal de la aplicación (Express, middlewares, etc.)
+│   ├── index.ts           # Punto de entrada principal de la aplicación
+│   ├── application/       # Lógica de aplicación: casos de uso y servicios
+│   ├── config/            # Archivos de configuración, variables de entorno, conexiones
+│   ├── domain/            # Lógica de dominio: entidades, value objects y reglas de negocio
+│   ├── infrastructure/    # Adaptadores a servicios externos y persistencia de datos
+│   ├── interfaces/        # Interfaces de entrada: controladores HTTP, APIs, CLI, etc.                    
+
+```
 ## Descripción del Proyecto
 
 TechShop Cloud es una plataforma de comercio electrónico escalable diseñada para la venta de productos tecnológicos. El proyecto implementa una arquitectura robusta basada en Domain-Driven Design (DDD) y arquitectura hexagonal, proporcionando escalabilidad, seguridad y tolerancia a fallos.
