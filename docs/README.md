@@ -3,8 +3,6 @@
 
 Este repositorio contiene la estructura base del backend de **TechShop Cloud**, una plataforma de comercio electrónico construida con **Node.js**, **TypeScript**, **MongoDB** y **Mongoose**. El diseño sigue los principios de **Domain-Driven Design (DDD)** y **arquitectura hexagonal**, lo cual permite una solución altamente escalable, mantenible y orientada al dominio.
 
-##  Estructura de Carpetas
-
 ## Estructura del Proyecto
 
 ```markdown
