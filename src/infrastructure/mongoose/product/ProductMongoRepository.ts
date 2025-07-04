@@ -5,7 +5,14 @@ import { ProductFilterDTO } from '../../../interfaces/http/dtos/ProductFilterDTO
 
 export class ProductMongoRepository implements ProductRepository {
   async save(product: Product): Promise<Product> {
-    const doc = await ProductModel.create(product);
+    const doc = await ProductModel.create({
+      name: product.name,
+      description: product.description,
+      price: product.price,
+      category: product.category,
+      stockQuantity: product.stockQuantity
+    });
+
     return new Product(doc.name, doc.description, doc.price, doc.category, doc.stockQuantity, doc.id.toString());
   }
 

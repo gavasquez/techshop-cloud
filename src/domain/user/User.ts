@@ -100,7 +100,7 @@ export class User {
     this._firstName = firstName;
     this._lastName = lastName;
     this._updatedAt = new Date();
-    
+
     this.validateInvariants();
   }
 
@@ -108,7 +108,7 @@ export class User {
     this._email = newEmail;
     this._emailVerified = false; // Require re-verification
     this._updatedAt = new Date();
-    
+
     this.validateInvariants();
   }
 
@@ -153,7 +153,7 @@ export class User {
 
   public isLocked(): boolean {
     if (!this._lockedUntil) return false;
-    
+
     if (new Date() > this._lockedUntil) {
       // Auto-unlock expired locks
       this._lockedUntil = null;
@@ -161,7 +161,7 @@ export class User {
       this._updatedAt = new Date();
       return false;
     }
-    
+
     return true;
   }
 
@@ -200,20 +200,21 @@ export class User {
     if (!this._firstName || this._firstName.trim().length === 0) {
       throw new Error('First name cannot be empty');
     }
-    
+
     if (!this._lastName || this._lastName.trim().length === 0) {
       throw new Error('Last name cannot be empty');
     }
-    
+
     if (!this._passwordHash || this._passwordHash.length === 0) {
       throw new Error('Password hash cannot be empty');
     }
-    
+
     if (this._roles.length === 0) {
       throw new Error('User must have at least one role');
     }
 
     if (this._firstName.length > 50) {
+      console.log(this._firstName);
       throw new Error('First name cannot exceed 50 characters');
     }
 
@@ -249,22 +250,23 @@ export class User {
   }): User {
     const user = new User(
       data.email,
-      data.passwordHash,
-      data.firstName,
-      data.lastName,
+      data.firstName,    
+      data.lastName,     
+      data.passwordHash, 
       data.roles.map(role => role as UserRole),
       data.id
     );
-    
+
     user._active = data.active;
     user._updatedAt = data.updatedAt;
     user._lastLoginAt = data.lastLoginAt;
     user._emailVerified = data.emailVerified;
     user._failedLoginAttempts = data.failedLoginAttempts;
     user._lockedUntil = data.lockedUntil;
-    
+
     return user;
   }
+
 
   // Convert to plain object for persistence
   public toPersistence(): {

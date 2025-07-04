@@ -6,9 +6,9 @@ export class UserController {
 
     register = async (req: Request, res: Response) => {
         try {
-            const { name, email, password } = req.body;
-            const user = await this.userUseCase.register(name, email, password);
-            res.status(201).json({ message: "Usuario registrado", user });
+            const { firstName, lastName, email, password } = req.body;
+            const user = await this.userUseCase.register(firstName, lastName, email, password);
+            res.status(201).json({ message: "Usuario registrado", user: user.toDto() });
         } catch (err: any) {
             res.status(400).json({ message: err.message });
         }
@@ -18,7 +18,7 @@ export class UserController {
         try {
             const { email, password } = req.body;
             const user = await this.userUseCase.login(email, password);
-            res.status(200).json({ message: "Login exitoso", user });
+            res.status(200).json({ message: "Login exitoso", user: user.toDto() });
         } catch (err: any) {
             res.status(401).json({ message: err.message });
         }
@@ -29,7 +29,7 @@ export class UserController {
             const { id } = req.params;
             const user = await this.userUseCase.getProfile(id);
             if (!user) res.status(404).json({ message: "Usuario no encontrado" });
-            res.status(200).json({ user });
+            res.status(200).json({ user: user?.toDto() });
         } catch (err) {
             res.status(500).json({ message: "Error al obtener perfil" });
         }

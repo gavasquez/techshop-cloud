@@ -2,18 +2,18 @@
   "name": "techshop",
   "description": "",
   "scripts": {
-  "dev": "nodemon",
-  "build": "rimraf ./dist && tsc",
-  "start": "npm run build && node dist/app.js",
-  "test": "jest",
-  "test:watch": "jest --watch",
-  "test:coverage": "jest --coverage",
-  "test:unit": "jest --testPathPattern=unit",
-  "test:integration": "jest --testPathPattern=integration",
-  "test:e2e": "jest --testPathPattern=e2e",
-  "test:ci": "jest --coverage --watchAll=false",
-  "lint": "echo 'Linting not configured yet'",
-  "typecheck": "tsc --noEmit"
+    "dev": "nodemon",
+    "build": "rimraf ./dist && tsc",
+    "start": "npm run build && node dist/app.js",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:unit": "jest --testPathPattern=unit",
+    "test:integration": "jest --testPathPattern=integration",
+    "test:e2e": "jest --testPathPattern=e2e",
+    "test:ci": "jest --coverage --watchAll=false",
+    "lint": "echo 'Linting not configured yet'",
+    "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
@@ -39,6 +39,7 @@
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.16.1",
-    "uuid": "^11.1.0"
+    "uuid": "^11.1.0",
+    "zod": "^3.25.71"
   }
 }
