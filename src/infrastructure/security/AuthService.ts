@@ -96,9 +96,12 @@ export class AuthService {
 
   async register(request: RegisterRequest): Promise<AuthResult> {
     try {
+      console.log('AuthService.register - Starting registration for:', request.email);
+      
       // Check if user already exists
       const existingUser = await this.userRepository.findByEmail(request.email);
       if (existingUser) {
+        console.log('AuthService.register - User already exists:', request.email);
         return {
           success: false,
           message: 'User with this email already exists'
@@ -108,6 +111,7 @@ export class AuthService {
       // Validate password strength
       const passwordValidation = this.passwordEncoder.validatePasswordStrength(request.password);
       if (!passwordValidation.isValid) {
+        console.log('AuthService.register - Password validation failed:', passwordValidation.errors);
         return {
           success: false,
           message: passwordValidation.errors.join(', ')
@@ -116,26 +120,30 @@ export class AuthService {
 
       // Hash password
       const passwordHash = await this.passwordEncoder.encode(request.password);
+      console.log('AuthService.register - Password hashed successfully');
 
       // Create user
       const user = new User(
         request.email,
-        passwordHash,
         request.firstName,
         request.lastName,
+        passwordHash,
         [UserRole.USER] // Default role
       );
+      console.log('AuthService.register - User object created successfully');
 
       // Save user
       const savedUser = await this.userRepository.save(user);
+      console.log('AuthService.register - User saved successfully:', savedUser.id);
 
       return {
         success: true,
         user: savedUser,
-        message: 'User registered successfully. Please verify your email.'
+        message: 'User registered successfully. You can now login.'
       };
 
     } catch (error) {
+      console.error('AuthService.register - Error during registration:', error);
       return {
         success: false,
         message: 'Registration failed due to server error'

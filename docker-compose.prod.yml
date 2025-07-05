@@ -1,0 +1,146 @@
+version: '3.8'
+
+# ========================================
+# TechShop Cloud - Docker Compose Producción
+# Configuración optimizada para producción
+# ========================================
+
+services:
+  # ========================================
+  # API Backend - TechShop Cloud (Producción)
+  # ========================================
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: techshop-api-prod
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - MONGODB_URI=${MONGODB_URI}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET}
+      - JWT_ACCESS_EXPIRES_IN=3600000
+      - JWT_REFRESH_EXPIRES_IN=604800000
+      - AES_SECRET_KEY=${AES_SECRET_KEY}
+    depends_on:
+      - mongodb
+    networks:
+      - techshop-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    deploy:
+      replicas: 2
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+
+  # ========================================
+  # MongoDB Database (Producción)
+  # ========================================
+  mongodb:
+    image: mongo:7.0
+    container_name: techshop-mongodb-prod
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD}
+      - MONGO_INITDB_DATABASE=${MONGO_DATABASE:-techshop}
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - techshop-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+
+  # ========================================
+  # Redis Cache (Producción)
+  # ========================================
+  redis:
+    image: redis:7-alpine
+    container_name: techshop-redis-prod
+    volumes:
+      - redis_data:/data
+    networks:
+      - techshop-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 256M
+        reservations:
+          cpus: '0.1'
+          memory: 128M
+
+  # ========================================
+  # Nginx Reverse Proxy (Producción)
+  # ========================================
+  nginx:
+    image: nginx:alpine
+    container_name: techshop-nginx-prod
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./docker/nginx/ssl:/etc/nginx/ssl
+    depends_on:
+      - api
+    networks:
+      - techshop-network
+    restart: unless-stopped
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 128M
+        reservations:
+          cpus: '0.1'
+          memory: 64M
+
+# ========================================
+# Volumes
+# ========================================
+volumes:
+  mongodb_data:
+    driver: local
+  redis_data:
+    driver: local
+
+# ========================================
+# Networks
+# ========================================
+networks:
+  techshop-network:
+    driver: bridge 

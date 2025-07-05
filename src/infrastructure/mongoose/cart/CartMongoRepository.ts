@@ -7,62 +7,61 @@ import { Product } from "../../../domain/product/Product";
 export class CartMongoRepository implements CartRepository {
 
   async addToCart(cartItem: CartItem): Promise<CartItem> {
-    const created = await CartItemModel.create({
+    const cartItemData = {
       userId: cartItem.userId,
-      productId: new Types.ObjectId(cartItem.productId), // ← conversión
+      productId: cartItem.productId, // Use UUID directly
       quantity: cartItem.quantity,
       addedAt: cartItem.addedAt
-    });
+    };
 
-    return new CartItem(
-      created.userId,
-      created.productId.toString(),
-      created.quantity,
-      created.addedAt,
-      created.id.toString()
-    );
+    if (cartItem.id) {
+      // Update existing cart item
+      const updated = await CartItemModel.findByIdAndUpdate(
+        cartItem.id,
+        cartItemData,
+        { new: true, runValidators: true }
+      );
+      
+      if (!updated) {
+        throw new Error('Cart item not found');
+      }
+      
+      return this.mapToCartItem(updated);
+    } else {
+      // Create new cart item
+      const created = await CartItemModel.create(cartItemData);
+      return this.mapToCartItem(created);
+    }
   }
 
 
   async getCartItems(userId: string): Promise<CartItem[]> {
-    const items = await CartItemModel.find({ userId })
-      .populate("productId")
-      .lean();
+    const items = await CartItemModel.find({ userId }).lean();
 
     try {
-      return items.map((item) => {
-        const product = item.productId as any;
-
-        const productEntity = new Product(
-          product.name,
-          product.description,
-          product.price,
-          product.category,
-          product.stockQuantity,
-          product._id.toString()
-        );
-
-        return new CartItem(
-          item.userId,
-          product._id.toString(),
-          item.quantity,
-          item.addedAt,
-          item._id.toString(),
-          productEntity
-        );
-      });
+      return items.map((item) => this.mapToCartItem(item));
     } catch (error) {
       console.error("❌ Error al mapear items:", error);
       throw new Error("Error al mapear items del carrito");
     }
   }
 
-
   async removeFromCart(cartItemId: string): Promise<void> {
-    await CartItemModel.deleteOne({ id: cartItemId });
+    await CartItemModel.findByIdAndDelete(cartItemId);
   }
 
   async clearCart(userId: string): Promise<void> {
     await CartItemModel.deleteMany({ userId });
+  }
+
+  private mapToCartItem(doc: any): CartItem {
+    const data = doc.toObject ? doc.toObject() : doc;
+    return new CartItem(
+      data.userId,
+      data.productId,
+      data.quantity,
+      data.addedAt,
+      data._id.toString()
+    );
   }
 }

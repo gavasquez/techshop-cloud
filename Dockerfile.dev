@@ -1,0 +1,32 @@
+# ========================================
+# TechShop Cloud - Dockerfile para Desarrollo
+# Hot reload y debugging habilitado
+# ========================================
+
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Instalar dependencias del sistema
+RUN apk add --no-cache libc6-compat
+
+# Copiar archivos de dependencias
+COPY package*.json ./
+COPY tsconfig.json ./
+COPY nodemon.json ./
+
+# Instalar todas las dependencias (incluyendo devDependencies)
+RUN npm install
+
+# Copiar código fuente
+COPY . .
+
+# Variables de entorno para desarrollo
+ENV NODE_ENV=development
+ENV PORT=3000
+
+# Exponer puerto
+EXPOSE 3000
+
+# Comando de inicio con nodemon para hot reload
+CMD ["npm", "run", "dev"] 

@@ -1,37 +1,55 @@
 import { UserRepository } from "../../domain/user/UserRepository";
 import { User } from "../../domain/user/User";
-import bcrypt from "bcryptjs";
+import { AuthService } from "../../infrastructure/security/AuthService";
+import { JwtTokenProvider } from "../../infrastructure/security/JwtTokenProvider";
+import { PasswordEncoder } from "../../infrastructure/security/PasswordEncoder";
 
 export class UserUseCase {
-    constructor(private readonly userRepo: UserRepository) { }
+    private readonly authService: AuthService;
+
+    constructor(private readonly userRepo: UserRepository) {
+        const jwtTokenProvider = new JwtTokenProvider();
+        const passwordEncoder = new PasswordEncoder();
+        this.authService = new AuthService(jwtTokenProvider, passwordEncoder, userRepo);
+    }
 
     async register(
         firstName: string,
         lastName: string,
         email: string,
         password: string
-    ): Promise<User> {
-        const exists = await this.userRepo.findByEmail(email);
-        if (exists) throw new Error("El usuario ya existe");
+    ): Promise<{ user: User; tokens?: any }> {
+        const result = await this.authService.register({
+            email,
+            password,
+            firstName,
+            lastName
+        });
 
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const user = new User(email, firstName, lastName, hashedPassword);
-
-        return await this.userRepo.save(user);
-    }
-
-    async login(email: string, password: string): Promise<User> {
-        const user = await this.userRepo.findByEmail(email);
-        if (!user) throw new Error("Credenciales inválidas");
-
-        const valid = await bcrypt.compare(password, user.passwordHash);
-        if (!valid) {
-            user.recordFailedLogin();
-            throw new Error("Credenciales inválidas");
+        if (!result.success || !result.user) {
+            throw new Error(result.message || "Error en el registro");
         }
 
-        user.recordLogin();
-        return await this.userRepo.save(user);
+        return {
+            user: result.user,
+            tokens: result.tokens
+        };
+    }
+
+    async login(email: string, password: string): Promise<{ user: User; tokens: any }> {
+        const result = await this.authService.login({
+            email,
+            password
+        });
+
+        if (!result.success || !result.user || !result.tokens) {
+            throw new Error(result.message || "Credenciales inválidas");
+        }
+
+        return {
+            user: result.user,
+            tokens: result.tokens
+        };
     }
 
     async getProfile(id: string): Promise<User | null> {

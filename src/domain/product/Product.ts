@@ -20,7 +20,7 @@ export class Product {
     stockQuantity: number,
     id?: string
   ) {
-    this._id = id ?? uuidv4();
+    this._id = id ?? ''; // Empty string for new products, MongoDB will generate _id
     this._name = name;
     this._description = description;
     this._price = price;
@@ -165,6 +165,8 @@ export class Product {
       data.id
     );
     
+    // Override the _id with the MongoDB _id
+    (product as any)._id = data.id;
     product._active = data.active;
     product._updatedAt = data.updatedAt;
     
@@ -173,7 +175,7 @@ export class Product {
 
   // Convert to plain object for persistence
   public toPersistence(): {
-    id: string;
+    id?: string;
     name: string;
     description: string;
     price: number;
@@ -183,8 +185,7 @@ export class Product {
     createdAt: Date;
     updatedAt: Date;
   } {
-    return {
-      id: this._id,
+    const data: any = {
       name: this._name,
       description: this._description,
       price: this._price,
@@ -194,6 +195,13 @@ export class Product {
       createdAt: this._createdAt,
       updatedAt: this._updatedAt
     };
+
+    // Only include id if it's not a new product (has been saved before)
+    if (this._id && this._id !== '') {
+      data.id = this._id;
+    }
+
+    return data;
   }
 
   // Convert to DTO for API responses

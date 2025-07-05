@@ -1,15 +1,15 @@
-import { Schema, model, Document, Types } from "mongoose";
+import { Schema, model, Document } from "mongoose";
 
 export interface CartItemDocument extends Document {
     userId: string;
-    productId: Types.ObjectId;
+    productId: string;
     quantity: number;
     addedAt: Date;
 }
 
 const CartItemSchema = new Schema<CartItemDocument>({
     userId: { type: String, required: true },
-    productId: { type: Schema.Types.ObjectId, ref: "Product", required: true },
+    productId: { type: String, required: true },
     quantity: { type: Number, required: true },
     addedAt: { type: Date, default: Date.now }
 });

@@ -30,7 +30,7 @@ export class User {
     roles: UserRole[] = [UserRole.USER],
     id?: string
   ) {
-    this._id = id || uuidv4();
+    this._id = id || ''; // Empty string for new users, MongoDB will generate _id
     this._email = email;
     this._passwordHash = passwordHash;
     this._firstName = firstName;
@@ -40,7 +40,7 @@ export class User {
     this._createdAt = new Date();
     this._updatedAt = new Date();
     this._lastLoginAt = null;
-    this._emailVerified = false;
+    this._emailVerified = true; // Cambiado a true para permitir login inmediato
     this._failedLoginAttempts = 0;
     this._lockedUntil = null;
 
@@ -106,7 +106,7 @@ export class User {
 
   public updateEmail(newEmail: string): void {
     this._email = newEmail;
-    this._emailVerified = false; // Require re-verification
+    this._emailVerified = true; // Cambiado a true para no requerir verificación
     this._updatedAt = new Date();
 
     this.validateInvariants();
@@ -257,6 +257,8 @@ export class User {
       data.id
     );
 
+    // Override the _id with the MongoDB _id
+    (user as any)._id = data.id;
     user._active = data.active;
     user._updatedAt = data.updatedAt;
     user._lastLoginAt = data.lastLoginAt;
@@ -270,7 +272,7 @@ export class User {
 
   // Convert to plain object for persistence
   public toPersistence(): {
-    id: string;
+    id?: string;
     email: string;
     passwordHash: string;
     firstName: string;
@@ -284,8 +286,7 @@ export class User {
     failedLoginAttempts: number;
     lockedUntil: Date | null;
   } {
-    return {
-      id: this._id,
+    const data: any = {
       email: this._email,
       passwordHash: this._passwordHash,
       firstName: this._firstName,
@@ -299,6 +300,13 @@ export class User {
       failedLoginAttempts: this._failedLoginAttempts,
       lockedUntil: this._lockedUntil
     };
+
+    // Only include id if it's not a new user (has been saved before)
+    if (this._id && this._id !== '') {
+      data.id = this._id;
+    }
+
+    return data;
   }
 
   // Convert to DTO for API responses (excluding sensitive data)
